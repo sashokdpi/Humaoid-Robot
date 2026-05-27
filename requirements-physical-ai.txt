@@ -1,0 +1,24 @@
+# Core API
+fastapi>=0.110.0
+uvicorn>=0.27.0
+pydantic>=2.0.0
+
+# Perception
+ultralytics>=8.0.0
+numpy>=1.24.0
+
+# Trained AI (RL + PINNs)
+torch>=2.0.0
+gymnasium>=0.29.0
+onnx>=1.15.0
+onnxscript>=0.1.0
+onnxruntime>=1.16.0
+
+# Agentic AI (LangGraph + LLM)
+langgraph>=0.2.0
+langchain-core>=0.3.0
+langchain-openai>=0.2.0
+
+# Optional Jetson / hardware
+# pyrealsense2
+# ROS2 via apt: ros-humble-rclpy ros-humble-control-msgs

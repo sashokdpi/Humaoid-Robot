@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="industrial_arm">
+
+  <xacro:property name="pi" value="3.14159265359"/>
+
+  <link name="base_link">
+    <visual>
+      <geometry><cylinder length="0.05" radius="0.12"/></geometry>
+      <material name="gray"><color rgba="0.5 0.5 0.5 1"/></material>
+    </visual>
+    <collision>
+      <geometry><cylinder length="0.05" radius="0.12"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="5.0"/>
+      <inertia ixx="0.05" ixy="0" ixz="0" iyy="0.05" iyz="0" izz="0.05"/>
+    </inertial>
+  </link>
+
+  <!-- 6-DOF chain: adjust link lengths to match your arm -->
+  <xacro:macro name="arm_joint" params="name parent child xyz rpy limit_lower limit_upper">
+    <joint name="${name}" type="revolute">
+      <parent link="${parent}"/>
+      <child link="${child}"/>
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="${limit_lower}" upper="${limit_upper}" effort="150" velocity="2.0"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="arm_link" params="name length radius">
+    <link name="${name}">
+      <visual>
+        <geometry><cylinder length="${length}" radius="${radius}"/></geometry>
+        <material name="blue"><color rgba="0.2 0.4 0.8 1"/></material>
+      </visual>
+      <collision>
+        <geometry><cylinder length="${length}" radius="${radius}"/></geometry>
+      </collision>
+      <inertial>
+        <mass value="2.0"/>
+        <inertia ixx="0.02" ixy="0" ixz="0" iyy="0.02" iyz="0" izz="0.02"/>
+      </inertial>
+    </link>
+  </xacro:macro>
+
+  <xacro:arm_link name="link_1" length="0.15" radius="0.06"/>
+  <xacro:arm_link name="link_2" length="0.30" radius="0.05"/>
+  <xacro:arm_link name="link_3" length="0.25" radius="0.045"/>
+  <xacro:arm_link name="link_4" length="0.12" radius="0.04"/>
+  <xacro:arm_link name="link_5" length="0.10" radius="0.035"/>
+  <xacro:arm_link name="link_6" length="0.08" radius="0.03"/>
+
+  <xacro:arm_joint name="joint_1" parent="base_link" child="link_1" xyz="0 0 0.025" rpy="0 0 0" limit_lower="-3.14" limit_upper="3.14"/>
+  <xacro:arm_joint name="joint_2" parent="link_1" child="link_2" xyz="0 0 0.075" rpy="0 0 0" limit_lower="-2.0" limit_upper="2.0"/>
+  <xacro:arm_joint name="joint_3" parent="link_2" child="link_3" xyz="0 0 0.15" rpy="0 0 0" limit_lower="-2.5" limit_upper="2.5"/>
+  <xacro:arm_joint name="joint_4" parent="link_3" child="link_4" xyz="0 0 0.125" rpy="0 0 0" limit_lower="-3.14" limit_upper="3.14"/>
+  <xacro:arm_joint name="joint_5" parent="link_4" child="link_5" xyz="0 0 0.06" rpy="0 0 0" limit_lower="-2.0" limit_upper="2.0"/>
+  <xacro:arm_joint name="joint_6" parent="link_5" child="link_6" xyz="0 0 0.05" rpy="0 0 0" limit_lower="-3.14" limit_upper="3.14"/>
+
+  <link name="tool0">
+    <visual>
+      <geometry><box size="0.04 0.04 0.08"/></geometry>
+      <material name="orange"><color rgba="1.0 0.5 0.0 1"/></material>
+    </visual>
+  </link>
+  <joint name="ee_fixed" type="fixed">
+    <parent link="link_6"/>
+    <child link="tool0"/>
+    <origin xyz="0 0 0.04" rpy="0 0 0"/>
+  </joint>
+
+  <!-- RealSense D455 mount (optional) -->
+  <link name="camera_link"/>
+  <joint name="camera_mount" type="fixed">
+    <parent link="link_6"/>
+    <child link="camera_link"/>
+    <origin xyz="0.05 0 0.05" rpy="0 0.785 0"/>
+  </joint>
+
+</robot>

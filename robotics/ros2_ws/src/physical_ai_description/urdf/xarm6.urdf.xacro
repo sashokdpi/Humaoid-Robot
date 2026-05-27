@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<!--
+  UFACTORY xArm6 — joint names match xarm_ros2 (joint1..joint6).
+  For full meshes/DH, install xarm_ros2 and launch with use_official_urdf:=true
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="xarm6">
+
+  <xacro:arg name="use_official_urdf" default="false"/>
+  <xacro:arg name="add_gripper" default="false"/>
+
+  <xacro:if value="$(arg use_official_urdf)">
+    <xacro:include filename="$(find xarm_description)/urdf/xarm6/xarm6.urdf.xacro"/>
+  </xacro:if>
+
+  <xacro:unless value="$(arg use_official_urdf)">
+    <!-- Simplified xArm6 kinematic chain (612 mm reach), compatible with xarm_ros2 joint names -->
+
+    <link name="world"/>
+    <link name="link_base">
+      <visual>
+        <geometry><cylinder length="0.12" radius="0.10"/></geometry>
+        <material name="white"><color rgba="0.9 0.9 0.9 1"/></material>
+      </visual>
+      <collision><geometry><cylinder length="0.12" radius="0.10"/></geometry></collision>
+      <inertial><mass value="2.7"/><inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/></inertial>
+    </link>
+    <joint name="world_joint" type="fixed">
+      <parent link="world"/><child link="link_base"/>
+    </joint>
+
+    <xacro:macro name="xarm_link" params="name length mass">
+      <link name="${name}">
+        <visual>
+          <geometry><box size="0.08 ${length} 0.08"/></geometry>
+          <material name="grey"><color rgba="0.75 0.75 0.75 1"/></material>
+        </visual>
+        <collision><geometry><box size="0.08 ${length} 0.08"/></geometry></collision>
+        <inertial><mass value="${mass}"/><inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/></inertial>
+      </link>
+    </xacro:macro>
+
+    <xacro:macro name="revolute" params="name parent child xyz rpy lower upper">
+      <joint name="${name}" type="revolute">
+        <parent link="${parent}"/><child link="${child}"/>
+        <origin xyz="${xyz}" rpy="${rpy}"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="${lower}" upper="${upper}" effort="50" velocity="3.14"/>
+      </joint>
+    </xacro:macro>
+
+    <xacro:xarm_link name="link1" length="0.267" mass="2.0"/>
+    <xacro:xarm_link name="link2" length="0.288" mass="2.0"/>
+    <xacro:xarm_link name="link3" length="0.270" mass="1.5"/>
+    <xacro:xarm_link name="link4" length="0.150" mass="1.0"/>
+    <xacro:xarm_link name="link5" length="0.120" mass="0.8"/>
+    <xacro:xarm_link name="link6" length="0.080" mass="0.5"/>
+
+    <xacro:revolute name="joint1" parent="link_base" child="link1" xyz="0 0 0.267" rpy="0 0 0" lower="-6.283" upper="6.283"/>
+    <xacro:revolute name="joint2" parent="link1" child="link2" xyz="0 0 0" rpy="1.5708 0 0" lower="-2.059" upper="2.0944"/>
+    <xacro:revolute name="joint3" parent="link2" child="link3" xyz="0 0.293 0" rpy="0 0 0" lower="-3.927" upper="0.19198"/>
+    <xacro:revolute name="joint4" parent="link3" child="link4" xyz="0 -0.0525 0.270" rpy="0 0 0" lower="-6.283" upper="6.283"/>
+    <xacro:revolute name="joint5" parent="link4" child="link5" xyz="0 0 0" rpy="1.5708 0 0" lower="-1.69297" upper="3.14159"/>
+    <xacro:revolute name="joint6" parent="link5" child="link6" xyz="0 0.0775 0" rpy="0 0 0" lower="-6.283" upper="6.283"/>
+
+    <link name="link_eef">
+      <visual><geometry><sphere radius="0.02"/></geometry>
+        <material name="orange"><color rgba="1 0.5 0 1"/></material>
+      </visual>
+    </link>
+    <joint name="joint_eef" type="fixed">
+      <parent link="link6"/><child link="link_eef"/>
+      <origin xyz="0 0 0.08" rpy="0 0 0"/>
+    </joint>
+
+    <xacro:arg name="add_gripper" default="true"/>
+    <xacro:if value="$(arg add_gripper)">
+      <link name="xarm_gripper_base_link">
+        <visual><geometry><box size="0.04 0.05 0.04"/></geometry></visual>
+      </link>
+      <joint name="gripper_fix" type="fixed">
+        <parent link="link_eef"/><child link="xarm_gripper_base_link"/>
+        <origin xyz="0 0 0.02" rpy="0 0 0"/>
+      </joint>
+      <link name="left_outer_knuckle"/>
+      <link name="right_outer_knuckle"/>
+      <joint name="drive_joint" type="revolute">
+        <parent link="xarm_gripper_base_link"/><child link="left_outer_knuckle"/>
+        <origin xyz="0 0 0.02" rpy="0 0 0"/>
+        <axis xyz="1 0 0"/>
+        <limit lower="0" upper="0.86" effort="10" velocity="2"/>
+      </joint>
+      <joint name="right_drive_joint" type="revolute">
+        <parent link="xarm_gripper_base_link"/><child link="right_outer_knuckle"/>
+        <origin xyz="0 0 0.02" rpy="0 0 0"/>
+        <axis xyz="-1 0 0"/>
+        <limit lower="0" upper="0.86" effort="10" velocity="2"/>
+        <mimic joint="drive_joint" multiplier="1" offset="0"/>
+      </joint>
+    </xacro:if>
+
+    <!-- RealSense D455 on wrist (common xArm setup) -->
+    <link name="camera_link"/>
+    <joint name="camera_mount" type="fixed">
+      <parent link="link_eef"/><child link="camera_link"/>
+      <origin xyz="0.05 0 0.03" rpy="0 0.785 0"/>
+    </joint>
+  </xacro:unless>
+
+</robot>

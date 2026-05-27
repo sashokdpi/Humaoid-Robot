@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scraping Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            text-align: center;
+        }
+        .container {
+            margin-top: 50px;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        p {
+            font-size: 18px;
+            color: #555;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Scraping Results</h1>
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% else %}
+            <p><strong>Total Reviews:</strong> {{ total_reviews }}</p>
+            <p><strong>Positive Reviews:</strong> {{ positive_reviews }}</p>
+            <p><strong>Neutral Reviews:</strong> {{ neutral_reviews }}</p>
+            <p><strong>Negative Reviews:</strong> {{ negative_reviews }}</p>
+            <a class="btn" href="/download">Download CSV</a>
+        {% endif %}
+    </div>
+</body>
+</html>

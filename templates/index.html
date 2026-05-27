@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Scraper API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            max-width: 600px;
+            text-align: center;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Web Scraping API</h1>
+        <form method="POST" action="/scrape">
+            <input type="text" name="url" placeholder="Enter URL" required>
+            <input type="text" name="review_block_class" placeholder="Review Block Class" required>
+            <input type="text" name="rating_class" placeholder="Rating Class" required>
+            <input type="text" name="review_class" placeholder="Review Text Class" required>
+            <input type="text" name="name_tag" placeholder="Name Tag (e.g., 'p')" required>
+            <input type="text" name="name_class" placeholder="Name Class" required>
+            <input type="text" name="date_tag" placeholder="Date Tag (e.g., 'p')" required>
+            <input type="text" name="date_class" placeholder="Date Class" required>
+            <input type="text" name="location_class" placeholder="Location Class" required>
+            <button type="submit">Scrape Reviews</button>
+        </form>
+    </div>
+</body>
+</html>

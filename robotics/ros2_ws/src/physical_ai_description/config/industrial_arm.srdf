@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<robot name="industrial_arm">
+  <group name="arm_group">
+    <joint name="joint_1"/>
+    <joint name="joint_2"/>
+    <joint name="joint_3"/>
+    <joint name="joint_4"/>
+    <joint name="joint_5"/>
+    <joint name="joint_6"/>
+  </group>
+  <end_effector name="tool0" parent_link="tool0" group="arm_group"/>
+</robot>
